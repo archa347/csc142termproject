@@ -4,10 +4,11 @@
 module control_fixture;
 	
 reg [15:0] instr;
-wire inst_memory_exception,alu_exception,data_memory_exception, jump,halt,write_reg,write_r0;
-wire [BRANCH_CONTROL_WIDTH-1:0] branch;
+reg inst_memory_exception,alu_exception,data_memory_exception; 
+wire jump,halt,write_reg,write_r0;
+wire [1:0] branch;
 wire mem_wrt;
-wire [ALU_CONTROL_WIDTH-1:0] alu_control;
+wire [3:0] alu_control;
 wire alu_a_src,alu_b_src,reg_wr_src;
 
 initial
@@ -16,13 +17,14 @@ initial
 
 initial
 begin
-	$monitor($time, " inst: %x \t op_code: %b \t func_code: %b \t exception: %b %b %b | alu_control: %b \t branch: %b \t mem_wrt: %b \t write_reg: %b \t write_r0: %b \t alu_a_src : %b \t alu_b_src : %b \t reg_wr_src \t halt: %b", 
+	$display("\t\ttime\tinst\top\tfunct\tex\talu_c\tbranch\tmem_wrt\twrt_reg\twrt_r0\talu_A\talu_B\treg_wr_src\thalt");
+	$monitor($time, "\t%x\t%b \t%b \t%b %b %b\t%b \t%b \t%b \t%b \t%b \t%b \t%b \t%b \t\t%b", 
 	instr, instr[15:12], instr[3:0], inst_memory_exception, data_memory_exception, alu_exception, alu_control, branch, mem_wrt, write_reg, write_r0, alu_a_src, alu_b_src, reg_wr_src, halt  );
 end
 
 control main_control( 
 	instr[15:12],
-	func_code[3:0],
+	instr[3:0],
 	inst_memory_exception,alu_exception,data_memory_exception,
 	jump,halt,write_reg,write_r0,branch,mem_wrt,alu_control,
 	alu_a_src,alu_b_src,reg_wr_src);
@@ -51,7 +53,7 @@ begin
 	#1 instr = 16'b0100_0011_1100_1010; //test alu exception
 	#1 instr = 16'b0000_1001_0110_1101; //test inst memory exception
 	#1 instr = 16'b0110_1100_1111_1011; //test data memory exception
-	#1 $finish
+	#1 $finish;
 end
 
 initial

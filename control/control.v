@@ -48,6 +48,7 @@ begin
 	jump = 0;
 	halt = 0;
 	write_reg = 0;
+	write_r0 = 0;
 	branch = 0;
 	mem_wrt = 0;
 	alu_control = 0;
