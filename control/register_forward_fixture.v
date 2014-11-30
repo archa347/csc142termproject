@@ -2,20 +2,20 @@
 
 module register_forward_fixture;
 
-reg [4:0] RN1;
-reg [4:0] RN2;
-reg [4:0] RN1_EX;
+reg [3:0] RN1;
+reg [3:0] RN2;
+reg [3:0] RN1_EX;
 reg WriteReg_EX, WriteR0_EX;
-wire Reg_Forwarding1,Reg_Forwarding2;
+wire [1:0] Reg_Forwarding1,Reg_Forwarding2;
 
 initial
-	$vcdpluson
+	$vcdpluson;
 
 
 initial
 begin
-	$monitor($time, " RN1: %x  RN2: %x  RN1_EX: %x  WriteReg_EX: %x  WriteR0_EX: %x || Reg_Forwarding1: %x  Reg_Forwarding: %x", 
-	RN1, RN2, RN1_EX, WriteREg_EX, WriteR0_EX, Reg_Forwarding1, Reg_Forwarding2);
+	$monitor($time, " RN1: %x  RN2: %x  RN1_EX: %x  WriteReg_EX: %x  WriteR0_EX: %x || Reg_Forwarding1: %b  Reg_Forwarding2: %b", 
+	RN1, RN2, RN1_EX, WriteReg_EX, WriteR0_EX, Reg_Forwarding1, Reg_Forwarding2);
 	#12 $finish;
 end
 
@@ -27,7 +27,7 @@ begin
 	#1 RN1 = 4'b0101;
 	#1 RN1 = 4'b0011;
 	#1 RN1 = 0;
-	#1 RN1 = 0;
+	#1 RN1 = 4'b0111;;
 	#1 RN1 = 0;
 end
 
@@ -36,7 +36,7 @@ begin
 	#1 RN2 = 4'b1111;
 	#1 RN2 = 4'b1100;
 	#1 RN2 = 4'b0011;
-	#1 RN2 = 0;
+	#1 RN2 = 4'b1001;;
 	#1 RN2 = 0;
 	#1 RN2 = 0;
 end
@@ -50,15 +50,15 @@ end
 
 initial
 begin
-	WriteReg_EX = 1;
+	#1 WriteReg_EX = 1;
 	#3 WriteReg_EX = 0;
 end
 
 initial
 begin
- 	#3 WriteR0_EX = 1;
+ 	#4 WriteR0_EX = 1;
  	#3 WriteR0_EX = 0;
 end
 
-
+endmodule
 

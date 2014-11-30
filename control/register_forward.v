@@ -6,7 +6,7 @@
 ***************************************************************************/
 
 
-module regiser_forward #(REGISTER_NUMBER_BIT_WIDTH=4) (
+module register_forward #(REGISTER_NUMBER_BIT_WIDTH=4) (
 	input [REGISTER_NUMBER_BIT_WIDTH-1:0] RN1,
 	input [REGISTER_NUMBER_BIT_WIDTH-1:0] RN2,
 	input [REGISTER_NUMBER_BIT_WIDTH-1:0] RN1_EX,
@@ -25,13 +25,13 @@ begin
 			if (RN1 == RN1_EX)
 				Reg_Forwarding1 = 2'b01;
 			if (RN2 == RN1_EX)
-				Reg_Forwarding2 = 2'b10;
+				Reg_Forwarding2 = 2'b01;
 		end
 
 	if (WriteR0_EX)
 		begin
 			if (RN1 == 0)
-				Reg_Forwarding1 = 2'b01;
+				Reg_Forwarding1 = 2'b10;
 			if (RN2 == 0)
 				Reg_Forwarding2 = 2'b10;
 		end
