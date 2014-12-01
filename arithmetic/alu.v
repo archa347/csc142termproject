@@ -1,7 +1,7 @@
 /****alu.v*******************
  * Main ALU for the CPU system
  * Written by Daniel Gallegos and Brandon Ortiz
- * CSC142, Fall 2014
+ * CSC142, Fall 2014, CSUS
 ****************************/
 
 
@@ -27,8 +27,8 @@ module alu
 //BEGIN Port List
 (input [REGISTER_DATA_BIT_WIDTH-1:0] A,B,
 input [ALU_CONTROL_WIDTH-1:0] ALU_Ctrl,
-output reg [REGISTER_DATA_BIT_WIDTH:0] R,	//Result to be output
-output reg [REGISTER_DATA_BIT_WIDTH:0] S,
+output reg [REGISTER_DATA_BIT_WIDTH-1:0] R,	//Result to be output
+output reg [REGISTER_DATA_BIT_WIDTH-1:0] S,
 output reg ALU_Exception);	//Additional result fro MUL/DIV
 //End Port List
 
@@ -37,7 +37,7 @@ reg [REGISTER_DATA_BIT_WIDTH*2-1:0] ovf_result; 	// ALU result upper and lower h
 always @(*)
 begin
 	ALU_Exception = 0;   //combinatorial logic
-	case (CTRL)
+	case (ALU_Ctrl)
 		ADD :  begin 
 			ovf_result = A + B;
 			if ( A[REGISTER_DATA_BIT_WIDTH-1] == B[REGISTER_DATA_BIT_WIDTH-1] && A[REGISTER_DATA_BIT_WIDTH-1] != ovf_result[REGISTER_DATA_BIT_WIDTH-1])
@@ -64,22 +64,25 @@ begin
 		SLL : ovf_result = A << B;  
 		SLR : ovf_result = A >> B;
 		ROL : begin 
-			ovf_result = A << B;   //Shift bits
-			ovf_result[B-1:0] = ovf_result[REGISTER_DATA_BIT_WIDTH+B-1:REGISTER_DATA_BIT_WIDTH];  //Then copy shifted bits from upper half to lower
+			ovf_result = A; 
+			ovf_result = ovf_result << B;   //Shift bits
+			ovf_result[REGISTER_DATA_BIT_WIDTH-1:0] = ovf_result[REGISTER_DATA_BIT_WIDTH*2-1:REGISTER_DATA_BIT_WIDTH] | ovf_result[REGISTER_DATA_BIT_WIDTH-1:0];  //Then copy shifted bits from upper half to lower
 			end
 		ROR : begin
+			ovf_result = 0;  // Takes care of lower half
 			ovf_result[REGISTER_DATA_BIT_WIDTH*2-1:REGISTER_DATA_BIT_WIDTH] = A;	   //Put operand A in upper half
 			ovf_result = ovf_result >> B;   //shift bits left
 			//move lower portion of upper half to low portion of lower half
-			ovf_result[REGISTER_DATA_BIT_WIDTH-B-1:0] = ovf_result[REGISTER_DATA_BIT_WIDTH*2-B-1:REGISTER_DATA_BIT_WIDTH];  
+			ovf_result[REGISTER_DATA_BIT_WIDTH-1:0] = ovf_result[REGISTER_DATA_BIT_WIDTH*2-1:REGISTER_DATA_BIT_WIDTH] | ovf_result[REGISTER_DATA_BIT_WIDTH-1:0];  //Then copy shifted bits from upper half to lower
 			end
+		0 :  ovf_result = 0;  //No operation requested
 		default : begin
 			$display("Invalid function code");
 			ALU_Exception = 1;
 			end
 	endcase
 	
-	// Output the proper results
+	// Assign to result output signals
 	R = ovf_result[REGISTER_DATA_BIT_WIDTH-1:0];
 	S = ovf_result[REGISTER_DATA_BIT_WIDTH*2-1:REGISTER_DATA_BIT_WIDTH];
 	
