@@ -14,7 +14,7 @@ initial
 
 initial
 begin
-	$monitor($time," data_in: %x \t jump: %x | data_out %x", data_in, jump, data_out);
+	$monitor($time," data_in: %b \t jump: %b | data_out %b", data_in, jump, data_out);
 end
 
 always
