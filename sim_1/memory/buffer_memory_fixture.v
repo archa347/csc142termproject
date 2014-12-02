@@ -1,9 +1,9 @@
-`include "BufferMemory.v"
+`include "buffer_memory.v"
 
 `define DATA_WIDTH 64
 
 //Top level stimulus module
-module BufferMemory_fixture;
+module buffer_memory_fixture;
 
 //Declare variables for stimulating input
 reg CLOCK, RESET, FLUSH;
@@ -17,10 +17,10 @@ initial
    $monitor($time, "DATA_OUT = %d", DATA_OUT[`DATA_WIDTH-1:0]);
 
 
-BufferMemory #(
+buffer_memory #(
        .DATA_WIDTH(`DATA_WIDTH)
     )    
-    BufferMemory1(
+    buffer_memory1(
       .clk(CLOCK),
       .rst(RESET),
       .flush(FLUSH),

@@ -1,4 +1,9 @@
-//Register File
+/* reg_file.v
+ * Register file
+ * Written by Daniel Gallegos and Brandon Ortiz
+ * CSC142, Fall 2014, CSUS
+*/
+
 `include "reg_port.v"
 
 module reg_file(rn_1, rn_2, wrn, wrd, r0d, wr0, wr, 
@@ -27,11 +32,14 @@ output exception;
 //Output defined as register
 output reg [REG_DATA_WIDTH -1:0] rd0;
 
+//Registers
 reg [REG_DATA_WIDTH - 1:0] rfile [NUM_REG - 1:0];
 reg ex_wrn;
 
+//Wires
 wire ex_rp1, ex_rp2;
- 
+
+//Instantiations 
 reg_port #(
       .REG_DATA_WIDTH(REG_DATA_WIDTH),
       .REG_NUM_WIDTH(REG_NUM_WIDTH),
@@ -70,28 +78,32 @@ reg_port #(
       .exception(ex_rp2)
     );
 
+//Continuos assignments
 assign exception = ex_rp1 | ex_rp2 | ex_wrn;
 
+//Procedural blocks
 always @(*)
 begin
-   if (wr0)
-      rd0 = r0d;
-   else
-      rd0 = rfile[0];
+    if (wr0)
+        rd0 = r0d;
+    else
+        rd0 = rfile[0];
 end
 
 always @(*)
 begin
-   ex_wrn = 1'b0;
+    ex_wrn = 1'b0;
 
-   if (wr)
-      if (wrn < NUM_REG)
-         rfile[wrn] = wrd; 
-      else
-         ex_wrn = 1'b1;
+    if (wr)
+        if (wrn < NUM_REG)
+            rfile[wrn] = wrd; 
+        else
+            ex_wrn = 1'b1;
 
-   if (wr0)
-      rfile[0] = r0d;
+    if (wr0)
+        rfile[0] = r0d;
 end
 
 endmodule
+
+//-----------------------------END OF FILE-------------------------------------

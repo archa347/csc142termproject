@@ -1,4 +1,9 @@
-//PC Latch
+/* pc.v
+ * Program counter
+ * Written by Daniel Gallegos and Brandon Ortiz
+ * CSC142, Fall 2014, CSUS
+*/
+
 module pc(clk, rst, pc_in, pc_out);
 
 //Parameters
@@ -13,10 +18,12 @@ output reg [INST_ADDR_WIDTH-1:0] pc_out;
 
 always @(posedge clk or negedge rst)
 begin
-   if (!rst)
-      pc_out <= 0;
-   else
-      pc_out <= pc_in;
+    if (!rst)
+        pc_out <= 0;
+    else
+        pc_out <= pc_in;
 end
 
 endmodule
+
+//-----------------------------END OF FILE-------------------------------------

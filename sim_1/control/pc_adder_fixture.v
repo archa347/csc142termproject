@@ -1,9 +1,9 @@
-`include "PC_Adder.v"
+`include "pc_adder.v"
 
 `define INST_ADDR_WIDTH 16
 
 //Top level stimulus module
-module PC_Adder_fixture;
+module pc_adder_fixture;
 
 //Declare variables for stimulating input
 reg HALT, BRANCH;
@@ -17,10 +17,10 @@ initial
    $monitor($time, "PC_OUT = %d", PC_OUT[`INST_ADDR_WIDTH-1:0]);
 
 
-PC_Adder #(
+pc_adder #(
        .INST_ADDR_WIDTH(`INST_ADDR_WIDTH)
     )    
-    PC_Adder1(
+    pc_adder1(
       .pc_in(PC_IN),
       .branch_addr(BRANCH_ADDR),
       .halt(HALT),
