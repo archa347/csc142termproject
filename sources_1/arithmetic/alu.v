@@ -68,20 +68,26 @@ begin
         end
         
         AND: 
-            ovf_result = A | B;
+            ovf_result = A & B;
 
         OR:  
-            ovf_result = A & B;
+            ovf_result = A | B;
 
         MUL: 
             ovf_result = A * B;  //Upper half will automatically be in ovf_result
 
         DIV: 
-        begin
-            ovf_result = A / B;	//integer division result
-            ovf_result[REGISTER_DATA_BIT_WIDTH*2-1:REGISTER_DATA_BIT_WIDTH] = A % B; //Remainder result
-        end
-    
+	    if (B == 0)
+	    begin
+		$display("Divide by 0!")
+		ALU_Exception = 1;
+	    end
+	    else
+	    begin
+            	ovf_result = A / B;	//integer division result
+            	ovf_result[REGISTER_DATA_BIT_WIDTH*2-1:REGISTER_DATA_BIT_WIDTH] = A % B; //Remainder result
+            end
+	    
         SLL: 
             ovf_result = A << B;  
 
