@@ -113,7 +113,7 @@ begin
             end
 
             BLT:
-	            branch = 2'b11;
+		branch = 2'b11;
 
             BGT:
             	branch = 2'b10;
