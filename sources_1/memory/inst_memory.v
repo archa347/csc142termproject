@@ -34,7 +34,7 @@ begin
         for ( i = 0; i < INSTR_MEM_SIZE; i=i+1)
             mem[i] <= 0;
     else 
-        if (addr < 64)
+        if (addr < INSTR_MEM_SIZE)
             data_reg <= mem[addr];
         else
             exc <= 1'b1;

@@ -1,45 +1,6 @@
-`include "inst_memory.v"
-`define INSTR_MEM_SIZE 16'h8000
 
-module inst_memory_fixture;
+reg [15:0] instructions[50]
 
-reg [15:0] addr;
-reg clk,rst;
-reg [15:0] instructions[50];
-
-wire [15:0] data;
-wire exc;
-
-integer i;
-
-initial 
-	$vcdpluson;
-
-
-initial
-begin
-	$monitor($time," CLK: %d, RST: %d, ADDR: %x \t MEM_DATA: %x\t DATA_OUT: %x \t\tEXC: %d\n",clk,rst,addr,mem_module.mem[addr], data,exc);
-end
-
-
-
-inst_memory #(
-	.INSTR_DATA_BIT_WIDTH(8),
-	.INSTR_ADDR_WIDTH(16),
-	.INSTR_MEM_SIZE(`INSTR_MEM_SIZE)
-	) mem_module (addr,clk,rst,data,exc);
-
-initial
-begin
-	#2 addr = 0;
-	#2 addr = 1;
-	#2 addr = 63;
-	#2 addr = 100;
-	#2 addr = 2;
-	#2 addr = 3;
-	#2 addr = 16'hFFFF;
-	#2 $finish;
-end
 
 initial
 begin
@@ -69,27 +30,5 @@ begin
 	instructions[23]= 16'b0000_1101_1101_1110;	//2E SUB R13, R13
 	instructions[24]= 16'b0000_1100_1101_1111;	//30 ADD R12, R13
 	instructions[25]= 16'hEFFF;					//32 EFFF
-
-	for (i=0; i < `INST_MEM_SIZE; i=i+1)
-	begin
-		if (i % 2 == 0 && i <= 25)
-			mem_module.mem[i] = instructions[i*2];
-		if (i > 25)
-			mem_module.mem[i] = 0;
-	end
 end
 
-initial 
-begin
-	clk = 0;
-	forever #1 clk = ~clk;
-end
-
-initial
-begin
-	rst = 1;
-	#10 rst=0;
-	#1 rst=1;
-end
-
-endmodule
