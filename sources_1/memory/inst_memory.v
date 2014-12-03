@@ -9,7 +9,7 @@ module inst_memory(addr, clk, rst, data, exc);
 //Parameters
 parameter INSTR_ADDR_WIDTH = 16;
 parameter INSTR_DATA_BIT_WIDTH = 16;
-parameter INSTR_MEM_SIZE = 64;
+parameter INSTR_MEM_SIZE = 4096;
 
 //I/O ports
 input [INSTR_ADDR_WIDTH-1:0] addr;
@@ -21,7 +21,7 @@ output reg exc;
 
 //Registers
 reg [INSTR_DATA_BIT_WIDTH-1:0] data_reg;
-reg [INSTR_DATA_BIT_WIDTH-1:0] mem [INSTR_MEM_SIZE-1:0];
+reg [7:0] mem [INSTR_MEM_SIZE-1:0];
 
 //Integers
 integer i;
@@ -34,8 +34,8 @@ begin
         for ( i = 0; i < INSTR_MEM_SIZE; i=i+1)
             mem[i] <= 0;
     else 
-        if (addr < 64)
-            data_reg <= mem[addr];
+        if (addr < INSTR_MEM_SIZE-1)
+            data_reg <= {mem[addr+1],mem[addr]} ;
         else
             exc <= 1'b1;
 end
