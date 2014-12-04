@@ -26,6 +26,16 @@ reg ex_w, ex_r;
 
 reg [DATA_MEM_WIDTH-1:0] data [DATA_MEM_SIZE-1:0];
 
+integer i;
+
+initial
+begin
+    data[0] = 16'h2bcd;
+    
+    for (i = 1; i < DATA_MEM_SIZE; i = i + 1)        
+        data[i] = 0;          
+end
+
 //Continuous assignments
 assign exception = ex_w | ex_r;
 
@@ -37,18 +47,18 @@ begin
    if (write)
         if (addr < DATA_MEM_SIZE)
             data[addr] = data_in;
-        else
-            ex_w = 1'b1;
+        //else
+            //ex_w = 1'b1;
 end
 
-always @(*)
+always @(addr)
 begin
     ex_r = 1'b0;
 
     if (addr < DATA_MEM_SIZE)
         data_out = data[addr];
-    else
-        ex_r = 1'b1;
+    //else
+        //ex_r = 1'b1;
 end
 
 endmodule

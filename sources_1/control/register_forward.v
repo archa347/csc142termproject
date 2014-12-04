@@ -21,6 +21,12 @@ input write_r0;
 output reg [REG_FORWARD_WIDTH-1:0] reg_forward_1;
 output reg [REG_FORWARD_WIDTH-1:0] reg_forward_2;
 
+initial
+begin
+    reg_forward_1 = 0;           
+    reg_forward_2 = 0;           
+end
+
 //Procedural blocks
 always @(*)
 begin

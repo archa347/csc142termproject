@@ -4,7 +4,7 @@
  * CSC142, Fall 2014, CSUS
 */
 
-`include "sign_extender.v"
+//`include "arithmetic/sign_extender.v"
 
 module sign_extend_shifter(data_in, data_out_1, data_out_2);
 
@@ -23,10 +23,16 @@ output reg [DATA_OUT_WIDTH-1:0] data_out_1, data_out_2;
 //Wires
 wire [DATA_OUT_WIDTH-1:0] ext_result_max, ext_result_min;
 
+initial
+begin
+    data_out_1 = 0;    
+    data_out_2 = 0;    
+end
+
 //Instantiations
 sign_extender #(
-        .DATA_OUT_WIDTH(),
-        .DATA_IN_MAX_WIDTH()
+        .REG_DATA_WIDTH(DATA_OUT_WIDTH),
+        .DATA_2_WIDTH(DATA_IN_MAX_WIDTH)
     ) 
     sign_ext_max(
         .data_in(data_in[DATA_IN_MAX_WIDTH-1:0]),
@@ -34,8 +40,8 @@ sign_extender #(
     );
 
 sign_extender #(
-        .DATA_OUT_WIDTH(),
-        .DATA_IN_MIN_WIDTH()
+        .REG_DATA_WIDTH(DATA_OUT_WIDTH),
+        .DATA_2_WIDTH(DATA_IN_MIN_WIDTH)
     ) 
     sign_ext_min(
         .data_in(data_in[DATA_IN_MIN_WIDTH-1:0]),

@@ -21,6 +21,11 @@ input [BRANCH_CONTROL_WIDTH - 1:0] branch_control;
 //Output defined as register
 output reg branch;
 
+initial
+begin
+    branch = 0;        
+end
+
 //Procedural blocks
 always @(*)
 begin

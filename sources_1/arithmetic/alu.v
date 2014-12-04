@@ -34,6 +34,14 @@ output reg exc_alu;
 //Registers
 reg [REG_DATA_WIDTH*2-1:0] ovf_result; 	// ALU result upper and lower half
 
+initial
+begin
+    r = 0;
+    s = 0;
+    exc_alu = 0;
+    ovf_result = 0;
+end
+
 //Procedural blocks
 always @(*)
 begin
@@ -78,8 +86,8 @@ begin
 
         DIV: 
         begin
-            ovf_result = a / b;	//integer division result
-            ovf_result[REG_DATA_WIDTH*2-1:REG_DATA_WIDTH] = a % b; //Remainder result
+            ovf_result = a ;/// b;	//integer division result
+            //ovf_result[REG_DATA_WIDTH*2-1:REG_DATA_WIDTH] = a % b; //Remainder result
         end
     
         SLL: 
@@ -112,7 +120,7 @@ begin
         default: 
         begin
             $display("Invalid function code");
-            exc_alu = 1;
+            //exc_alu = 1;
         end
     endcase
 

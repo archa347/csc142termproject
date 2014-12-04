@@ -23,6 +23,11 @@ output reg [REG_DATA_WIDTH-1:0] data_out;
 //Wires
 wire [REG_DATA_WIDTH-1:0] data_2_ext;
 
+initial
+begin
+    data_out = 0;    
+end
+
 //Instantiations
 sign_extender #(
         .REG_DATA_WIDTH(REG_DATA_WIDTH),

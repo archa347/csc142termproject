@@ -39,6 +39,12 @@ reg ex_wrn;
 //Wires
 wire ex_rp1, ex_rp2;
 
+initial
+begin
+    rd0 = 0;
+    ex_wrn = 0;
+end
+
 //Instantiations 
 reg_port #(
       .REG_DATA_WIDTH(REG_DATA_WIDTH),
@@ -77,12 +83,32 @@ reg_port #(
       .rd(rd_2),
       .exception(ex_rp2)
     );
+    
+initial
+begin
+	rfile[0]= 16'h0000;
+    rfile[1] = 16'h0f00;
+	rfile[2] = 16'h0050;
+	rfile[3] = 16'hff0f;
+	rfile[4] = 16'hf0ff;
+	rfile[5] = 16'h0040;
+	rfile[6] = 16'h0024;
+	rfile[7] = 16'h00ff;
+	rfile[8] = 16'haaaa;
+	rfile[9] = 16'h0000;
+	rfile[10] = 16'h0000;
+	rfile[11]= 16'h0000;
+	rfile[12]= 16'hffff;
+	rfile[13]= 16'h0002;
+	rfile[14]= 16'h0000;
+	rfile[15]= 16'h0000;	
+end    
 
 //Continuos assignments
 assign exception = ex_rp1 | ex_rp2 | ex_wrn;
 
 //Procedural blocks
-always @(*)
+always @(wr0, r0d, rfile[0])
 begin
     if (wr0)
         rd0 = r0d;

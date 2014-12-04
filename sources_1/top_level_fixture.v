@@ -37,7 +37,7 @@ module top_level_fixture;
 	initial begin
 		// Initialize Inputs
 		clk = 0;
-		rst = 0;
+		rst = 1;
 
 		// Wait 100 ns for global reset to finish
 		#100;
@@ -45,7 +45,7 @@ module top_level_fixture;
         rst = 1;
         
 		// Add stimulus here
-        #4000;
+        #1000;
         
         $finish;
 	end

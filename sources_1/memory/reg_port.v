@@ -29,6 +29,14 @@ output reg exception;
 //Registers
 reg ex_rn, ex_rf; 
 
+initial
+begin
+    rd = 0;
+    exception = 0;
+    ex_rn = 0;
+    ex_rf = 0;
+end
+
 //Procedural blocks
 always @(*)
 begin

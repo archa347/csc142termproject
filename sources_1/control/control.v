@@ -48,12 +48,25 @@ output reg mem_wrt;
 output reg [ALU_CONTROL_WIDTH-1:0] alu_control;
 output reg alu_a_src, alu_b_src, reg_wr_src;
 
+initial
+begin
+    jump = 0;       
+    halt = 0;
+    write_reg = 0;
+    write_r0 = 0;    
+    branch_control = 0;
+    mem_wrt = 0;
+    alu_control = 0;
+    alu_a_src = 0;
+    alu_b_src = 0;
+    reg_wr_src = 0;
+end
+
 //Procedural blocks
 always @(*)
 begin
     //zero out the control signals
-    jump = 0;
-    halt = 0;
+    jump = 0;    
     write_reg = 0;
     write_r0 = 0;
     branch_control = 0;
@@ -131,7 +144,7 @@ begin
             default: 
             begin
                 halt = 1;
-                $display("Invalid opcode received");
+                $display("Invalid opcode received = %d", op_code);
             end
         endcase
     end

@@ -4,7 +4,7 @@
  * CSC142, Fall 2014, CSUS
 */
 
-module inst_memory(addr, clk, rst, data, exc);
+module inst_memory(addr, data, exc);
 
 //Parameters
 parameter INST_ADDR_WIDTH = 16;
@@ -13,7 +13,6 @@ parameter INST_MEM_SIZE = 26;
 
 //I/O ports
 input [INST_ADDR_WIDTH-1:0] addr;
-input clk, rst;
 
 //Outputs defined as registers
 output reg [INST_DATA_BIT_WIDTH-1:0] data;
@@ -29,7 +28,10 @@ reg [INST_ADDR_WIDTH-1:0] instructions [INST_MEM_SIZE-1:0];
 
 initial
 begin
-	instructions[0] = 16'b0000_0001_0010_1111;  //00 ADD R1, R2
+	data = 0;
+    exc = 0;
+    
+    instructions[0] = 16'b0000_0001_0010_1111;  //00 ADD R1, R2
 	instructions[1] = 16'b0000_0001_0010_1110; 	//02 SUB R1, R2
 	instructions[2] = 16'b0000_0011_0100_1100;  //04 OR R3, R4
 	instructions[3] = 16'b0000_0011_0010_1101;	//06 AND R3, R2
@@ -63,7 +65,7 @@ begin
 end
 
 //Procedural blocks
-always @(addr)
+always @(*)
 begin
     if ((addr / 2) < INST_MEM_SIZE)
         data = mem[addr / 2];        

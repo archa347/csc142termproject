@@ -1,5 +1,5 @@
-/* alu.v
- * Main ALU for the CPU system
+/* top_level.v
+ * Top level for the CPU system
  * Written by Daniel Gallegos and Brandon Ortiz
  * CSC142, Fall 2014, CSUS
 */
@@ -21,17 +21,17 @@
 module top_level(clk, rst);
 
 //Parameters
+parameter NUM_BYTES_IN_INST = 2;
 parameter INST_ADDR_WIDTH = 16;
 parameter INST_DATA_BIT_WIDTH = 16;
 parameter INST_MEM_SIZE = 26;
-parameter IF_BUFFER_WIDTH = 32;
-parameter NUM_BYTES_IN_INST = 2;
-parameter BRANCH_CONTROL_WIDTH = 2;
-parameter ALU_CONTROL_WIDTH = 4;
+parameter NUM_REG = 16;
 parameter REG_DATA_WIDTH = 16;
 parameter REG_NUM_WIDTH = 4;
+parameter BRANCH_CONTROL_WIDTH = 2;
+parameter ALU_CONTROL_WIDTH = 4;
 parameter REG_FORWARD_WIDTH = 2;
-parameter NUM_REG = 16;
+parameter IF_BUFFER_WIDTH = 32;
 parameter EX_BUFFER_WIDTH = 54;
 parameter ALU_SRC_DATA_2_WIDTH = 4;
 parameter INST_SHIFT_MAX_WIDTH = 12;
@@ -67,8 +67,11 @@ wire [ALU_CONTROL_WIDTH-1:0] alu_control_decode, alu_control_execute;
 
 wire write_reg_execute, write_r0_execute, mem_wrt_execute;
 wire alu_a_src_execute, alu_b_src_execute, reg_wr_src_execute;
+wire pc_src;
 
 assign wrd_execute = reg_wr_src_execute ? data_memory_data_out : r;
+assign flush = halt | branch;
+assign pc_src = branch | jump;
 
 //Instantiations
 pc #(
@@ -89,9 +92,15 @@ pc_adder #(
         .pc_in(pc_out),
         .branch_addr(branch_addr),
         .halt(halt),
-        .branch(branch),
+        .pc_src(pc_src),
         .pc_added(pc_in)        
     );
+    
+initial
+begin
+    $monitor($time, "PC: %d", pc_out);
+    $monitor($time, "inst_fetch: %h", inst_fetch);
+end
     
 inst_memory #(
         .INST_ADDR_WIDTH(INST_ADDR_WIDTH),
@@ -99,15 +108,13 @@ inst_memory #(
         .INST_MEM_SIZE(INST_MEM_SIZE)
     ) 
     inst_memory1(
-        .clk(clk),
-        .rst(rst),
         .addr(pc_out),
         .data(inst_fetch),
         .exc(exc_inst_memory)
     );
     
 buffer_memory #(
-        .DATA_MEM_WIDTH(IF_BUFFER_WIDTH)
+        .DATA_WIDTH(IF_BUFFER_WIDTH)
     ) 
     buffer_memory_if(
         .clk(clk),
@@ -189,12 +196,11 @@ reg_file #(
 
 branch_comp #(
         .REG_DATA_WIDTH(REG_DATA_WIDTH),
-        .BRANCH_CONTROL_WIDTH(BRANCH_CONTROL_WIDTH),
-        .INST_ADDR_WIDTH(INST_ADDR_WIDTH)
+        .BRANCH_CONTROL_WIDTH(BRANCH_CONTROL_WIDTH)
     ) 
     branch_comp1(
-        .data_1(inst_decode[7:0]),
-        .data_2(inst_decode[11:0]),
+        .data_1(rd1_decode),
+        .data_2(rd2_decode),
         .branch_control(branch_control),
         .branch(branch)
     );    
@@ -245,7 +251,7 @@ assign rd1_execute = buffer_data_ex_out[31:0];
 assign rd2_execute = buffer_data_ex_out[15:0];
                             
 buffer_memory #(
-        .DATA_MEM_WIDTH(EX_BUFFER_WIDTH)
+        .DATA_WIDTH(EX_BUFFER_WIDTH)
     ) 
     buffer_memory_ex(
         .clk(clk),
