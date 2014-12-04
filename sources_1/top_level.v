@@ -205,7 +205,7 @@ register_forward #(
         .write_reg(write_reg_execute),
         .write_r0(write_r0_execute),
         .reg_forward_1(reg_forward_1),
-        .reg_forward_1(reg_forward_1)
+        .reg_forward_2(reg_forward_2)
     );    
 
 
@@ -276,8 +276,8 @@ alu #(
         .ALU_CONTROL_WIDTH(ALU_CONTROL_WIDTH)
     ) 
     alu1(
-        .A(alu_a),
-        .B(alu_b),        
+        .a(alu_a),
+        .b(alu_b),        
         .alu_control(alu_control_execute),
         .r(r),
         .s(r0d_execute),
