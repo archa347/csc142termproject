@@ -37,8 +37,8 @@ parameter ALU_SRC_DATA_2_WIDTH = 4;
 parameter INST_SHIFT_MAX_WIDTH = 12;
 parameter INST_SHIFT_MIN_WIDTH = 8;
 parameter INST_SHIFT_AMOUNT = 1;
-parameter DATA_ADDR_WIDTH = 16;
-parameter DATA_SIZE = 1024;
+parameter DATA_MEM_ADDR_WIDTH = 16;
+parameter DATA_MEM_SIZE = 1024;
 
 //I/O ports
 input clk, rst;
@@ -107,7 +107,7 @@ inst_memory #(
     );
     
 buffer_memory #(
-        .DATA_WIDTH(IF_BUFFER_WIDTH)
+        .DATA_MEM_WIDTH(IF_BUFFER_WIDTH)
     ) 
     buffer_memory_if(
         .clk(clk),
@@ -245,7 +245,7 @@ assign rd1_execute = buffer_data_ex_out[31:0];
 assign rd2_execute = buffer_data_ex_out[15:0];
                             
 buffer_memory #(
-        .DATA_WIDTH(EX_BUFFER_WIDTH)
+        .DATA_MEM_WIDTH(EX_BUFFER_WIDTH)
     ) 
     buffer_memory_ex(
         .clk(clk),
@@ -290,9 +290,9 @@ alu #(
     ); 
     
 data_memory #(
-        .DATA_ADDR_WIDTH(DATA_ADDR_WIDTH),
-        .DATA_WIDTH(REG_DATA_WIDTH),
-        .DATA_SIZE(DATA_SIZE)
+        .DATA_MEM_ADDR_WIDTH(DATA_MEM_ADDR_WIDTH),
+        .DATA_MEM_WIDTH(REG_DATA_WIDTH),
+        .DATA_MEM_SIZE(DATA_MEM_SIZE)
     ) 
     data_memory1(
         .addr(r),
