@@ -4,8 +4,6 @@
  * CSC142, Fall 2014, CSUS
 */
 
-//`include "arithmetic/sign_extender.v"
-
 module sign_extend_shifter(rst, data_in, data_out_1, data_out_2);
 
 //Parameters

@@ -4,8 +4,6 @@
  * CSC142, Fall 2014, CSUS
 */
 
-`include "reg_port.v"
-
 module reg_file(rst, rn_1, rn_2, wrn, wrd, r0d, wr0, wr, 
                 reg_forward_1, reg_forward_2, rd_1, rd_2, rd0, exception
                );

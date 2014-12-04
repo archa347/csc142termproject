@@ -4,8 +4,6 @@
  * CSC142, Fall 2014, CSUS
 */
 
-`include "sign_extender.v"
-
 module alu_src(rst, data_1, data_2, alu_src, data_out);
 
 //Parameters

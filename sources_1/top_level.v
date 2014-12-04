@@ -6,6 +6,7 @@
 
 `include "arithmetic/alu.v"
 `include "arithmetic/alu_src.v"
+`include "arithmetic/sign_extender.v"
 `include "arithmetic/sign_extend_shifter.v"
 `include "control/branch_adder.v"
 `include "control/branch_comp.v"
@@ -17,6 +18,7 @@
 `include "memory/data_memory.v"
 `include "memory/inst_memory.v"
 `include "memory/reg_file.v"
+`include "memory/reg_port.v"
 
 module top_level(clk, rst);
 
