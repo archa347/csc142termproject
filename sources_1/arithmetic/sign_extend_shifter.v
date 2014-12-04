@@ -6,7 +6,7 @@
 
 `include "sign_extender.v"
 
-module sign_extend_shifter(data_in, jump, data_out);
+module sign_extend_shifter(data_in, data_out_1, data_out_2);
 
 //Parameters
 parameter DATA_IN_MAX_WIDTH = 12;
@@ -16,13 +16,9 @@ parameter SHIFT_AMOUNT = 1;
 
 //I/O ports
 input [DATA_IN_MAX_WIDTH-1:0] data_in;
-input jump;
 
 //Outputs defined as registers
-output reg [DATA_OUT_WIDTH-1:0] data_out);
-
-//Registers
-reg [DATA_OUT_WIDTH-1:0] ext_result;
+output reg [DATA_OUT_WIDTH-1:0] data_out_1, data_out_2;
 
 //Wires
 wire [DATA_OUT_WIDTH-1:0] ext_result_max, ext_result_min;
@@ -34,7 +30,7 @@ sign_extender #(
     ) 
     sign_ext_max(
         .data_in(data_in[DATA_IN_MAX_WIDTH-1:0]),
-        .ext_result_max(ext_result_max)
+        .data_out(ext_result_max)
     );
 
 sign_extender #(
@@ -43,18 +39,14 @@ sign_extender #(
     ) 
     sign_ext_min(
         .data_in(data_in[DATA_IN_MIN_WIDTH-1:0]),
-        .ext_result_min(ext_result_min)
+        .data_out(ext_result_min)
     );
 
 //Procedural blocks
 always @(*)
 begin 
-    if (jump) //If jump, uses largest width
-        ext_result = ext_result_max;  
-    else //else use min width
-        ext_result = ext_result_min;
-
-    data_out = ext_result << SHIFT_AMOUNT;  //shift result
+    data_out_1 = ext_result_max << SHIFT_AMOUNT;  //shift result
+    data_out_2 = ext_result_min << SHIFT_AMOUNT;  //shift result
 end
 
 endmodule

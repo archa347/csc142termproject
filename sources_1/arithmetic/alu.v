@@ -4,11 +4,11 @@
  * CSC142, Fall 2014, CSUS
 */
 
-module alu (A, B, ALU_Ctrl, R, S, ALU_Exception);
+module alu (a, b, alu_control, r, s, exc_alu);
 
 //Parameters
-parameter DATA_WIDTH=16;
-parameter ALU_CONTROL_WIDTH=4;
+parameter REG_DATA_WIDTH = 16;
+parameter ALU_CONTROL_WIDTH = 4;
 
 //Function Codes
 parameter ADD = 4'b1111;
@@ -23,93 +23,87 @@ parameter ROL = 4'b1001;
 parameter ROR = 4'b1000;
 
 //I/O ports
-input [DATA_WIDTH-1:0] A, B;
-input [ALU_CONTROL_WIDTH-1:0] ALU_Ctrl;
+input [REG_DATA_WIDTH-1:0] a, b;
+input [ALU_CONTROL_WIDTH-1:0] alu_control;
 
 //Output defined as register
-output reg [DATA_WIDTH-1:0] R;
-output reg [DATA_WIDTH-1:0] S;
-output reg ALU_Exception;
+output reg [REG_DATA_WIDTH-1:0] r;
+output reg [REG_DATA_WIDTH-1:0] s;
+output reg exc_alu;
 
 //Registers
-reg [DATA_WIDTH*2-1:0] ovf_result; 	// ALU result upper and lower half
+reg [REG_DATA_WIDTH*2-1:0] ovf_result; 	// ALU result upper and lower half
 
 //Procedural blocks
 always @(*)
 begin
-    ALU_Exception = 0;   //combinatorial logic
+    exc_alu = 0;   //combinatorial logic
 
-    case (ALU_Ctrl)
+    case (alu_control)
         ADD: 
         begin 
-            ovf_result = A + B;
+            ovf_result = a + b;
 
-            if ( (A[DATA_WIDTH-1] == B[DATA_WIDTH-1]) && 
-                 (A[DATA_WIDTH-1] != ovf_result[DATA_WIDTH-1])
+            if ( (a[REG_DATA_WIDTH-1] == b[REG_DATA_WIDTH-1]) && 
+                 (a[REG_DATA_WIDTH-1] != ovf_result[REG_DATA_WIDTH-1])
             ) begin
                 // Overflow occurs when (-) + (-) = (+) or (+) + (+) = (-)
                 $display("Arithmetic overflow!");
-                ALU_Exception = 1;
+                exc_alu = 1;
             end
         end
         
         SUB: 
         begin
-            ovf_result = A - B;
+            ovf_result = a - b;
         
-            if ( (A[DATA_WIDTH-1] != B[DATA_WIDTH-1]) && 
-                 (A[DATA_WIDTH-1] != ovf_result[DATA_WIDTH-1])
+            if ( (a[REG_DATA_WIDTH-1] != b[REG_DATA_WIDTH-1]) && 
+                 (a[REG_DATA_WIDTH-1] != ovf_result[REG_DATA_WIDTH-1])
                 ) 
             begin
             	// Overflow occurs when (-) - (+) = (+) or (+) - (-) = (-)
                 $display("Arithmetic overflow!");
-                ALU_Exception = 1;
+                exc_alu = 1;
             end
         end
         
         AND: 
-            ovf_result = A & B;
+            ovf_result = a | b;
 
         OR:  
-            ovf_result = A | B;
+            ovf_result = a & b;
 
         MUL: 
-            ovf_result = A * B;  //Upper half will automatically be in ovf_result
+            ovf_result = a * b;  //Upper half will automatically be in ovf_result
 
         DIV: 
-	    if (B == 0)
-	    begin
-		$display("Divide by 0!")
-		ALU_Exception = 1;
-	    end
-	    else
-	    begin
-            	ovf_result = A / B;	//integer division result
-            	ovf_result[DATA_WIDTH*2-1:DATA_WIDTH] = A % B; //Remainder result
-            end
-	    
+        begin
+            ovf_result = a / b;	//integer division result
+            ovf_result[REG_DATA_WIDTH*2-1:REG_DATA_WIDTH] = a % b; //Remainder result
+        end
+    
         SLL: 
-            ovf_result = A << B;  
+            ovf_result = a << b;  
 
         SLR: 
-            ovf_result = A >> B;
+            ovf_result = a >> b;
 
         ROL: 
         begin 
-            ovf_result = A; 
-            ovf_result = ovf_result << B;   //Shift bits
+            ovf_result = a; 
+            ovf_result = ovf_result << b;   //Shift bits
             //Then copy shifted bits from upper half to lower
-            ovf_result[DATA_WIDTH-1:0] = ovf_result[DATA_WIDTH*2-1:DATA_WIDTH] | ovf_result[DATA_WIDTH-1:0];  
+            ovf_result[REG_DATA_WIDTH-1:0] = ovf_result[REG_DATA_WIDTH*2-1:REG_DATA_WIDTH] | ovf_result[REG_DATA_WIDTH-1:0];  
         end
 
         ROR: 
         begin
             ovf_result = 0;  // Takes care of lower half
-            ovf_result[DATA_WIDTH*2-1:DATA_WIDTH] = A;	   //Put operand A in upper half
-            ovf_result = ovf_result >> B;   //shift bits left
+            ovf_result[REG_DATA_WIDTH*2-1:REG_DATA_WIDTH] = a;	   //Put operand a in upper half
+            ovf_result = ovf_result >> b;   //shift bits left
             //move lower portion of upper half to low portion of lower half
             //Then copy shifted bits from upper half to lower
-            ovf_result[DATA_WIDTH-1:0] = ovf_result[DATA_WIDTH*2-1:DATA_WIDTH] | ovf_result[DATA_WIDTH-1:0];  
+            ovf_result[REG_DATA_WIDTH-1:0] = ovf_result[REG_DATA_WIDTH*2-1:REG_DATA_WIDTH] | ovf_result[REG_DATA_WIDTH-1:0];  
         end
     
         0:  
@@ -118,13 +112,13 @@ begin
         default: 
         begin
             $display("Invalid function code");
-            ALU_Exception = 1;
+            exc_alu = 1;
         end
     endcase
 
     // Assign to result output signals
-    R = ovf_result[DATA_WIDTH-1:0];
-    S = ovf_result[DATA_WIDTH*2-1:DATA_WIDTH];
+    r = ovf_result[REG_DATA_WIDTH-1:0];
+    s = ovf_result[REG_DATA_WIDTH*2-1:REG_DATA_WIDTH];
 end
 
 endmodule

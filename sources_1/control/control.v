@@ -4,8 +4,8 @@
  * CSC142, Fall 2014, CSUS
 */
 
-module control(op_code, func_code, inst_memory_exception, alu_exception, data_memory_exception, jump, 
-                halt, write_reg, write_r0, branch, mem_wrt, alu_control, alu_a_src, alu_b_src, reg_wr_src
+module control(op_code, func_code, exc_inst_memory, exc_alu, exc_data_memory, exc_reg_file, jump, 
+                halt, write_reg, write_r0, branch_control, mem_wrt, alu_control, alu_a_src, alu_b_src, reg_wr_src
             	);
 
 //Parameters
@@ -37,13 +37,13 @@ parameter ROL = 4'b1001;
 parameter ROR = 4'b1000;
 	
 //I/O ports		 	
-input [OP_CODE_WIDTH-1:0] op_code,
-input [FUNCTION_CODE_WIDTH-1:0] func_code,
-input inst_memory_exception,alu_exception,data_memory_exception,
+input [OP_CODE_WIDTH-1:0] op_code;
+input [FUNCTION_CODE_WIDTH-1:0] func_code;
+input exc_inst_memory, exc_alu, exc_data_memory, exc_reg_file;
 
 //Outputs defined as registers
 output reg jump, halt, write_reg, write_r0;
-output reg [BRANCH_CONTROL_WIDTH-1:0] branch;
+output reg [BRANCH_CONTROL_WIDTH-1:0] branch_control;
 output reg mem_wrt;
 output reg [ALU_CONTROL_WIDTH-1:0] alu_control;
 output reg alu_a_src, alu_b_src, reg_wr_src;
@@ -56,7 +56,7 @@ begin
     halt = 0;
     write_reg = 0;
     write_r0 = 0;
-    branch = 0;
+    branch_control = 0;
     mem_wrt = 0;
     alu_control = 0;
     alu_a_src = 0;
@@ -64,15 +64,16 @@ begin
     reg_wr_src = 0;
 
     //check for exceptions
-    if (inst_memory_exception ||  data_memory_exception || alu_exception)
+    if (exc_inst_memory ||  exc_data_memory || exc_alu)
     begin
         halt = 1;
-        $display("Exception signal received %b", {inst_memory_exception,data_memory_exception,alu_exception});
+        $display("Exception signal received %b", {exc_inst_memory,exc_data_memory,exc_alu});
     end	
     else //check opcodes
+	 begin
         case (op_code)
             ALU:
- 	        begin
+				begin
                 case (func_code)
                     MUL: 
                         write_r0 = 1;
@@ -106,20 +107,20 @@ begin
             end
 
             SW:
-        	begin
+				begin
                 alu_a_src = 1;
                 mem_wrt = 1;
                 alu_control = ADD;
             end
 
             BLT:
-		branch = 2'b11;
+	            branch_control = 2'b11;
 
             BGT:
-            	branch = 2'b10;
+            	branch_control = 2'b10;
         
             BEQ:
-            	branch = 2'b01;
+            	branch_control = 2'b01;
         
             JMP:
               	jump = 1;

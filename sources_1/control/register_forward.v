@@ -4,45 +4,45 @@
  * CSC142, Fall 2014, CSUS
 */
 
-module (rn1, rn2, rn1_ex, WriteReg_EX, WriteR0_EX, Reg_Forwarding1, Reg_Forwarding2);
+module register_forward(rn_1, rn_2, rn_1_ex, write_reg, write_r0, reg_forwarding_1, reg_forwarding_2);
 
 //Parameters
-parameter REGISTER_NUMBER_BIT_WIDTH = 4;
+parameter REG_NUM_WIDTH = 4;
 parameter REG_FORWARD_WIDTH = 2;
 
 //I/O ports
-input [REGISTER_NUMBER_BIT_WIDTH-1:0] rn1;
-input [REGISTER_NUMBER_BIT_WIDTH-1:0] rn2;
-input [REGISTER_NUMBER_BIT_WIDTH-1:0] rn1_ex;
-input WriteReg_EX;
-input WriteR0_EX;
+input [REG_NUM_WIDTH-1:0] rn_1;
+input [REG_NUM_WIDTH-1:0] rn_2;
+input [REG_NUM_WIDTH-1:0] rn_1_ex;
+input write_reg;
+input write_r0;
 
 //Outputs defined as registers
-output reg [REG_FORWARD_WIDTH-1:0] Reg_Forwarding1;
-output reg [REG_FORWARD_WIDTH-1:0] Reg_Forwarding2;
+output reg [REG_FORWARD_WIDTH-1:0] reg_forwarding_1;
+output reg [REG_FORWARD_WIDTH-1:0] reg_forwarding_2;
 
 //Procedural blocks
 always @(*)
 begin
-    Reg_Forwarding1 = 2'b00;
-    Reg_Forwarding2 = 2'b00;
+    reg_forwarding_1 = 2'b00;
+    reg_forwarding_2 = 2'b00;
 
-    if (WriteReg_EX) 
+    if (write_reg) 
     begin
-        if (rn1 == rn1_ex)
-            Reg_Forwarding1 = 2'b01;
+        if (rn_1 == rn_1_ex)
+            reg_forwarding_1 = 2'b01;
     
-        if (rn2 == rn1_ex)
-            Reg_Forwarding2 = 2'b01;
+        if (rn_2 == rn_1_ex)
+            reg_forwarding_2 = 2'b01;
     end
 
-    if (WriteR0_EX)
+    if (write_r0)
     begin
-        if (rn1 == 0)
-            Reg_Forwarding1 = 2'b10;
+        if (rn_1 == 0)
+            reg_forwarding_1 = 2'b10;
 
-        if (rn2 == 0)
-            Reg_Forwarding2 = 2'b10;
+        if (rn_2 == 0)
+            reg_forwarding_2 = 2'b10;
     end
 end
 

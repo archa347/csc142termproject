@@ -6,37 +6,37 @@
 
 `include "sign_extender.v"
 
-module alu_src(data_1, data_2, ALU_Src, data_out);
+module alu_src(data_1, data_2, alu_src, data_out);
 
 //Parameters
-parameter DATA_WIDTH = 16;
+parameter REG_DATA_WIDTH = 16;
 parameter DATA_2_WIDTH = 4;
 
 //I/O ports
-input [DATA_WIDTH-1:0] data_1;
+input [REG_DATA_WIDTH-1:0] data_1;
 input [DATA_2_WIDTH-1:0] data_2;
-input ALU_Src;
+input alu_src;
 
 //Outputs defined as register
-output reg [DATA_WIDTH-1:0] data_out;
+output reg [REG_DATA_WIDTH-1:0] data_out;
 
 //Wires
-wire [DATA_WIDTH-1:0] data_2_ext;
+wire [REG_DATA_WIDTH-1:0] data_2_ext;
 
 //Instantiations
 sign_extender #(
-        .DATA_WIDTH(DATA_WIDTH),
+        .REG_DATA_WIDTH(REG_DATA_WIDTH),
         .DATA_2_WIDTH(DATA_2_WIDTH)
     ) 
     sign_ext1(
-        .data_2(data_2),
-        .data_2_ext(data_2_ext)
+        .data_in(data_2),
+        .data_out(data_2_ext)
     );
 
 //Procedural blocks
 always @(*)
 begin
-    if (ALU_Src)
+    if (alu_src)
         data_out = data_2_ext;
     else 
         data_out = data_1;
