@@ -37,7 +37,7 @@ module top_level_fixture;
 	initial begin
 		// Initialize Inputs
 		clk = 0;
-		rst = 1;
+		rst = 0;
 
 		// Wait 100 ns for global reset to finish
 		#100;

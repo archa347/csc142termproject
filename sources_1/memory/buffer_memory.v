@@ -16,11 +16,6 @@ input [DATA_WIDTH - 1:0] data_in;
 //Output defined as register
 output reg [DATA_WIDTH-1:0] data_out;
 
-initial
-begin
-    data_out = 0;          
-end
-
 //Procedural blocks
 always @(posedge clk or negedge rst)
 begin
@@ -28,7 +23,7 @@ begin
         data_out <= 0;
     else if (flush)
         data_out <= 0;
-    else
+    else        
         data_out <= data_in;
 end
 

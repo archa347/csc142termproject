@@ -4,7 +4,7 @@
  * CSC142, Fall 2014, CSUS
 */
 
-module inst_memory(addr, data, exc);
+module inst_memory(rst, addr, data, exc);
 
 //Parameters
 parameter INST_ADDR_WIDTH = 16;
@@ -12,6 +12,7 @@ parameter INST_DATA_BIT_WIDTH = 16;
 parameter INST_MEM_SIZE = 26;
 
 //I/O ports
+input rst;
 input [INST_ADDR_WIDTH-1:0] addr;
 
 //Outputs defined as registers
@@ -56,21 +57,24 @@ begin
 	instructions[22]= 16'b0000_1100_1100_1111;	//2C ADD R12, R12
 	instructions[23]= 16'b0000_1101_1101_1110;	//2E SUB R13, R13
 	instructions[24]= 16'b0000_1100_1101_1111;	//30 ADD R12, R13
-	instructions[25]= 16'hEFFF;					//32 EFFF    
-	
-	for (i = 0; i < INST_MEM_SIZE; i = i + 1)
-	begin					
-        mem[i] = instructions[i];        
-	end
+	instructions[25]= 16'hEFFF;					//32 EFFF    	
 end
 
 //Procedural blocks
 always @(*)
 begin
-    if ((addr / 2) < INST_MEM_SIZE)
-        data = mem[addr / 2];        
+    if (!rst)
+    begin
+        for (i = 0; i < INST_MEM_SIZE; i = i + 1)
+            mem[i] = instructions[i];   
+    end
     else
-        data = 0;
+    begin
+        if ((addr / 2) < INST_MEM_SIZE)
+            data = mem[addr / 2];        
+        else
+            data = 0;
+    end
 end
 
 endmodule

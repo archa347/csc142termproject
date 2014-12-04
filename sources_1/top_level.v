@@ -38,7 +38,7 @@ parameter INST_SHIFT_MAX_WIDTH = 12;
 parameter INST_SHIFT_MIN_WIDTH = 8;
 parameter INST_SHIFT_AMOUNT = 1;
 parameter DATA_MEM_ADDR_WIDTH = 16;
-parameter DATA_MEM_SIZE = 1024;
+parameter DATA_MEM_SIZE = 3;
 
 //I/O ports
 input clk, rst;
@@ -89,6 +89,7 @@ pc_adder #(
         .NUM_BYTES_IN_INST(NUM_BYTES_IN_INST)
     ) 
     pc_adder1(
+        .rst(rst),
         .pc_in(pc_out),
         .branch_addr(branch_addr),
         .halt(halt),
@@ -96,18 +97,13 @@ pc_adder #(
         .pc_added(pc_in)        
     );
     
-initial
-begin
-    $monitor($time, "PC: %d", pc_out);
-    $monitor($time, "inst_fetch: %h", inst_fetch);
-end
-    
 inst_memory #(
         .INST_ADDR_WIDTH(INST_ADDR_WIDTH),
         .INST_DATA_BIT_WIDTH(INST_DATA_BIT_WIDTH),
         .INST_MEM_SIZE(INST_MEM_SIZE)
     ) 
     inst_memory1(
+        .rst(rst),
         .addr(pc_out),
         .data(inst_fetch),
         .exc(exc_inst_memory)
@@ -131,6 +127,7 @@ sign_extend_shifter #(
         .SHIFT_AMOUNT(INST_SHIFT_AMOUNT)
     ) 
     sign_extend_shifter1(
+        .rst(rst),
         .data_in(inst_decode[11:0]),        
         .data_out_1(inst_1),
         .data_out_2(inst_2)
@@ -139,9 +136,11 @@ sign_extend_shifter #(
 branch_adder #(
         .INST_1_WIDTH(IF_BUFFER_WIDTH),
         .INST_2_WIDTH(IF_BUFFER_WIDTH),
-        .INST_ADDR_WIDTH(INST_ADDR_WIDTH)
+        .INST_ADDR_WIDTH(INST_ADDR_WIDTH),
+        .NUM_BYTES_IN_INST(NUM_BYTES_IN_INST)
     ) 
     branch_adder1(
+        .rst(rst),
         .inst_1(inst_1),
         .inst_2(inst_2),
         .pc(pc_decode),
@@ -154,6 +153,7 @@ control #(
         .ALU_CONTROL_WIDTH(ALU_CONTROL_WIDTH)
     ) 
     control1(
+        .rst(rst),
         .op_code(inst_decode[15:12]),
         .func_code(inst_decode[3:0]),
         .exc_inst_memory(exc_inst_memory),
@@ -178,7 +178,8 @@ reg_file #(
         .REG_FORWARD_WIDTH(REG_FORWARD_WIDTH),
         .NUM_REG(NUM_REG)
     ) 
-    reg_file1(
+    reg_file1(    
+        .rst(rst),
         .rn_1(inst_decode[11:8]),
         .rn_2(inst_decode[7:4]),
         .wrn(rn1_ex),
@@ -199,6 +200,7 @@ branch_comp #(
         .BRANCH_CONTROL_WIDTH(BRANCH_CONTROL_WIDTH)
     ) 
     branch_comp1(
+        .rst(rst),
         .data_1(rd1_decode),
         .data_2(rd2_decode),
         .branch_control(branch_control),
@@ -210,6 +212,7 @@ register_forward #(
         .REG_FORWARD_WIDTH(REG_FORWARD_WIDTH)
     ) 
     register_forward1(
+        .rst(rst),
         .rn_1(inst_decode[11:8]),
         .rn_2(inst_decode[7:4]),
         .rn1_ex(rn1_ex),
@@ -247,7 +250,7 @@ assign alu_b_src_execute = buffer_data_ex_out[44];
 assign offset_ex = buffer_data_ex_out[43:40];
 assign rn2_ex = buffer_data_ex_out[39:36];
 assign rn1_ex = buffer_data_ex_out[35:32];
-assign rd1_execute = buffer_data_ex_out[31:0];
+assign rd1_execute = buffer_data_ex_out[31:16];
 assign rd2_execute = buffer_data_ex_out[15:0];
                             
 buffer_memory #(
@@ -265,6 +268,7 @@ alu_src #(
         .DATA_2_WIDTH(ALU_SRC_DATA_2_WIDTH)
     ) 
     alu_src_a(
+        .rst(rst),
         .data_1(rd1_execute),
         .data_2(offset_ex),        
         .alu_src(alu_a_src_execute),
@@ -276,6 +280,7 @@ alu_src #(
         .DATA_2_WIDTH(ALU_SRC_DATA_2_WIDTH)
     ) 
     alu_src_b(
+        .rst(rst),
         .data_1(rd2_execute),
         .data_2(rn2_ex),        
         .alu_src(alu_b_src_execute),
@@ -287,6 +292,7 @@ alu #(
         .ALU_CONTROL_WIDTH(ALU_CONTROL_WIDTH)
     ) 
     alu1(
+        .rst(rst),
         .a(alu_a),
         .b(alu_b),        
         .alu_control(alu_control_execute),
@@ -301,6 +307,7 @@ data_memory #(
         .DATA_MEM_SIZE(DATA_MEM_SIZE)
     ) 
     data_memory1(
+        .rst(rst),
         .addr(r),
         .data_in(rd1_execute),        
         .write(mem_wrt_execute),
