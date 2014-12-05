@@ -1,26 +1,10 @@
-`include "top_level.v"
+/* top_level_fixture.v
+ * Top level fixture for the CPU system
+ * Written by Daniel Gallegos and Brandon Ortiz
+ * CSC142, Fall 2014, CSUS
+*/
 
-////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer:
-//
-// Create Date:   16:51:02 12/03/2014
-// Design Name:   top_level
-// Module Name:   /home/brandon/CPE142/sources_1/top_level_fixture.v
-// Project Name:  CPE142
-// Target Device:  
-// Tool versions:  
-// Description: 
-//
-// Verilog Test Fixture created by ISE for module: top_level
-//
-// Dependencies:
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-////////////////////////////////////////////////////////////////////////////////
+`include "top_level.v"
 
 module top_level_fixture;
 
