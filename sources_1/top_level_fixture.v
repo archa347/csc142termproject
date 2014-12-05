@@ -42,4 +42,3 @@ module top_level_fixture;
     end
       
 endmodule
-
